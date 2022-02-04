@@ -24,7 +24,16 @@ def get_sp500_changes():
     
 
 def get_hkex_securities():
-    pass
+    # res = requests.get("https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwww.hkex.com.hk%2Feng%2Fservices%2Ftrading%2Fsecurities%2Fsecuritieslists%2FListOfSecurities.xlsx&wdOrigin=BROWSELINK")
+    # soup = BeautifulSoup(res.content, 'html5lib')
+    # destination = "V:\\tmp.xlsx"
+    # CHUNK_SIZE = 32768
+    # with open(destination, "wb") as f:
+    #     for chunk in res.iter_content(CHUNK_SIZE):
+    #         if chunk: # filter out keep-alive new chunks
+    #             f.write(chunk)
+    
+    pass    
     return
 
 
