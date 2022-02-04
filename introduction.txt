@@ -1,0 +1,58 @@
+Who I am:
+Hi I am HangukQuant. I am an equity L/S Portfolio Manager.
+I have experience doing quant research in multiple teams of established
+hedge funds. In the academic domain, I have published papers in both
+quantum finance and quantitative finance. 
+
+Most of you would know me through Twitter! I author the HangukQuant
+Newsletter, and talk about all topics quantitative in the markets.
+
+My formal education is in the area of Computer Science and AI.
+
+What the Project is About:
+This project is pseudo stream-course where I record the process of 
+implementing a full end-to-end algorithmic trading system from scratch.
+
+This not intended to be a course in Python, or statistical methods
+in Finance course. This is intended to be more for traders or programmers
+looking to test and implement their trading strategies in a unified
+approach.
+
+This is a live recording of me programming a system inspired by a 
+book on systematic trading a few months back. There is no intended
+course structure; it is first going to be filmed and then broken up
+based on logical breaks in the coding process. Hence, it might be
+slightly messy. Once again, this is not a lecture or tutorial!
+
+Learning material will be added to the course as the course develops.
+While the main stream will just be a documentation, educational material
+both simple and advanced will be supplemented.
+
+Missing Market:
+Most trading courses now on the market are data-sciencey courses that
+teach both Python and trading basics. They teach you how to manipulate
+dataframes, perform some indicator calculations et cetera, then
+teach you how to backtest. And then do order submission logic. In 
+most cases, there is little guidance on how to do it in a unified framework.
+
+That is, how do you perform tactical switching between different assets?
+How do `multiple backtests' lead to a sound capital allocation and 
+trading framework?
+
+Tech Stack:
+Python.
+Excel. (not really)
+
+Expectations:
+As you can tell, the technological stack is, very basic. 
+The code will be modular enough such that you can switch out 
+different functionalities based on your own proficiency. This is
+a SHOESTRING system, if you want to switch out components, feel free
+to!
+
+
+
+
+
+
+
