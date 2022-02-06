@@ -14,3 +14,5 @@ setuptools.setup(
     zip_safe=False
 ) # i have no idea what these parameters do, I just found it on Stack Overflow. 
 
+
+setuptools.setup()
