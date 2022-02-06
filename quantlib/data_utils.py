@@ -12,6 +12,17 @@ def get_sp500_instruments():
     df = pd.read_html(str(table))
     return list(df[0]["Symbol"])
 
+
+def get_sp500_changes():
+    res = requests.get("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
+    soup = BeautifulSoup(res.content,'lxml')
+    table = soup.find_all('table')[1] 
+    df = pd.read_html(str(table))
+    df = df[0]
+    new_columns = list(map(lambda x : "{}".format(x[0]) if (x[0]==x[1]) else "{} {}".format(x[0],x[1]), df.columns))
+    df.columns = new_columns
+    return df
+
 #now let's get its ohlcv data.
 def get_sp500_df():
     symbols = get_sp500_instruments() #lets just do it for 30 stocks
@@ -19,13 +30,15 @@ def get_sp500_df():
     ohlcvs = {}
     for symbol in symbols:
         symbol_df = yf.Ticker(symbol).history(period="10y")
-        ohlcvs[symbol] = symbol_df[["Open", "High", "Low", "Close", "Volume"]].rename(
+        ohlcvs[symbol] = symbol_df[["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]].rename(
             columns={
                 "Open": "open",
                 "High": "high",
                 "Low": "low",
                 "Close": "close",
-                "Volume": "volume"}
+                "Volume": "volume",
+                "Dividends": "dividends",
+                "Stock Splits": "stocksplits"}
         )
     #lets create a single dataframe with all the data inside
 
