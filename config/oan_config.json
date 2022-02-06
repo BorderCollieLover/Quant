@@ -1,0 +1,98 @@
+{
+    "fx_codes": [
+        "SEK",
+        "INR",
+        "ZAR",
+        "SGD",
+        "NZD",
+        "CZK",
+        "CNH",
+        "AUD",
+        "HUF",
+        "GBP",
+        "THB",
+        "PLN",
+        "CHF",
+        "USD",
+        "DKK",
+        "EUR",
+        "NOK",
+        "TRY",
+        "JPY",
+        "HKD",
+        "MXN",
+        "CAD"
+    ],
+
+    "currencies": [ 
+        "USD_MXN",
+        "GBP_USD",
+        "USD_THB",
+        "USD_ZAR",
+        "USD_SEK",
+        "USD_CHF",
+        "USD_TRY",
+        "USD_JPY",
+        "USD_CZK",
+        "USD_NOK",
+        "USD_DKK",
+        "USD_HKD",
+        "USD_CNH",
+        "USD_SGD",
+        "USD_CAD",
+        "USD_INR",
+        "AUD_USD",
+        "EUR_USD",    
+        "USD_PLN"
+    ],
+
+    "indices": [
+        "HK33_HKD",
+        "FR40_EUR",
+        "IN50_USD",
+        "JP225_USD",
+        "CN50_USD",
+        "EU50_EUR",
+        "UK100_GBP",
+        "SPX500_USD",
+        "JP225Y_JPY",
+        "ESPIX_EUR",
+        "NAS100_USD",
+        "SG30_SGD",
+        "AU200_AUD",
+        "CHINAH_HKD",
+        "TWIX_USD",
+        "US2000_USD",
+        "CH20_CHF",
+        "US30_USD",
+        "DE30_EUR"
+    ],
+
+    "bonds": [
+        "USB30Y_USD",
+        "UK10YB_GBP",
+        "DE10YB_EUR",
+        "USB02Y_USD",
+        "USB05Y_USD",
+        "USB10Y_USD",
+        "NL25_EUR"
+    ],
+
+    "commodities": [
+        "BCO_USD",
+        "NATGAS_USD",
+        "XCU_USD",
+        "WTICO_USD",
+        "SUGAR_USD",
+        "CORN_USD",
+        "WHEAT_USD",
+        "SOYBN_USD"
+    ],
+
+    "metals": [
+        "XAU_USD",
+        "XAG_USD",
+        "XPD_USD",
+        "XPT_USD"
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "commodities": [
+        "BCO_USD",
+        "NATGAS_USD",
+        "XCU_USD",
+        "WTICO_USD",
+        "SUGAR_USD",
+        "CORN_USD",
+        "WHEAT_USD",
+        "SOYBN_USD"
+    ],
+
+    "metals": [
+        "XAU_USD",
+        "XAG_USD",
+        "XPD_USD",
+        "XPT_USD"
+    ]
+}

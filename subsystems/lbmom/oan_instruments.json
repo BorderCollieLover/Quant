@@ -1,0 +1,35 @@
+{
+    "equities": [],
+    
+    "indices": [
+        "HK33_HKD",
+        "FR40_EUR",
+        "IN50_USD",
+        "JP225_USD",
+        "CN50_USD",
+        "EU50_EUR",
+        "UK100_GBP",
+        "SPX500_USD",
+        "JP225Y_JPY",
+        "ESPIX_EUR",
+        "NAS100_USD",
+        "SG30_SGD",
+        "AU200_AUD",
+        "CHINAH_HKD",
+        "TWIX_USD",
+        "US2000_USD",
+        "CH20_CHF",
+        "US30_USD",
+        "DE30_EUR"
+    ],
+
+    "bonds": [
+        "USB30Y_USD",
+        "UK10YB_GBP",
+        "DE10YB_EUR",
+        "USB02Y_USD",
+        "USB05Y_USD",
+        "USB10Y_USD",
+        "NL25_EUR"
+    ]
+}

@@ -12,31 +12,6 @@ def get_sp500_instruments():
     df = pd.read_html(str(table))
     return list(df[0]["Symbol"])
 
-def get_sp500_changes():
-    res = requests.get("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
-    soup = BeautifulSoup(res.content,'lxml')
-    table = soup.find_all('table')[1] 
-    df = pd.read_html(str(table))
-    df = df[0]
-    new_columns = list(map(lambda x : "{}".format(x[0]) if (x[0]==x[1]) else "{} {}".format(x[0],x[1]), df.columns))
-    df.columns = new_columns
-    return df
-    
-
-def get_hkex_securities():
-    # res = requests.get("https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwww.hkex.com.hk%2Feng%2Fservices%2Ftrading%2Fsecurities%2Fsecuritieslists%2FListOfSecurities.xlsx&wdOrigin=BROWSELINK")
-    # soup = BeautifulSoup(res.content, 'html5lib')
-    # destination = "V:\\tmp.xlsx"
-    # CHUNK_SIZE = 32768
-    # with open(destination, "wb") as f:
-    #     for chunk in res.iter_content(CHUNK_SIZE):
-    #         if chunk: # filter out keep-alive new chunks
-    #             f.write(chunk)
-    
-    pass    
-    return
-
-
 #now let's get its ohlcv data.
 def get_sp500_df():
     symbols = get_sp500_instruments() #lets just do it for 30 stocks
@@ -67,7 +42,7 @@ def get_sp500_df():
 
     return df, instruments
 
-def extend_dataframe(traded, df):
+def extend_dataframe(traded, df, fx_codes):
     df.index = pd.Series(df.index).apply(lambda x: format_date(x))
     open_cols = list(map(lambda x: str(x) + " open", traded))
     high_cols = list(map(lambda x: str(x) + " high", traded))
@@ -75,19 +50,32 @@ def extend_dataframe(traded, df):
     close_cols = list(map(lambda x: str(x) + " close", traded))
     volume_cols = list(map(lambda x: str(x) + " volume", traded))
     historical_data = df.copy()
+    print(historical_data)
     historical_data = historical_data[open_cols + high_cols + low_cols + close_cols + volume_cols]
     historical_data.fillna(method="ffill", inplace=True)
+    historical_data.fillna(method="bfill", inplace=True)
     for inst in traded:
-        #lets get return statistics using closing prices
-        #and volatility statistics using rolling standard deviations of 25 day window
-        #lets also see if a stock is being actively traded, by seeing if closing price today != yesterday
         historical_data["{} % ret".format(inst)] = historical_data["{} close".format(inst)] \
             / historical_data["{} close".format(inst)].shift(1) - 1
         historical_data["{} % ret vol".format(inst)] = historical_data["{} % ret".format(inst)].rolling(25).std()
         historical_data["{} active".format(inst)] = historical_data["{} close".format(inst)] \
             != historical_data["{} close".format(inst)].shift(1)
-    historical_data.fillna(method="bfill", inplace=True)
+        
+        #also include the inverse fx quotes for simplicity in later fx calculations
+        if is_fx(inst, fx_codes):
+            inst_rev = "{}_{}".format(inst.split("_")[1], inst.split("_")[0])
+            historical_data["{} close".format(inst_rev)] = 1 / historical_data["{} close".format(inst)]
+            historical_data["{} % ret".format(inst_rev)] = historical_data["{} close".format(inst_rev)] \
+                / historical_data["{} close".format(inst_rev)].shift(1) - 1
+            historical_data["{} % ret vol".format(inst_rev)] = historical_data["{} % ret".format(inst_rev)].rolling(25).std()
+            historical_data["{} active".format(inst_rev)] = historical_data["{} close".format(inst_rev)] \
+                != historical_data["{} close".format(inst_rev)].shift(1)            
+        
     return historical_data
+
+def is_fx(inst, fx_codes):
+    #e.g. EUR_USD, USD_SGD
+    return len(inst.split("_")) == 2 and inst.split("_")[0] in fx_codes and inst.split("_")[1] in fx_codes 
 
 #when obtaining data from numerous sources, we want to standardize communication units.
 #in other words, we want our object types to be the same. for instance, things like
