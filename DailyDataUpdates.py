@@ -6,12 +6,13 @@ Created on Mon Feb  7 13:46:22 2022
 """
 
 import json
-import quantlib.data_utils as data_utils
 import datetime
 import pandas as pd
 import numpy as np
 
 
+import quantlib.data_utils as data_utils
+import quantlib.general_utils as general_utils
 
 
 class YF_OHLC_Update():
@@ -39,20 +40,18 @@ class YF_OHLC_Update():
             df_sp500_chg.to_excel(self.ticker_file_path+"\\SP500 Change "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
             df_ndq.to_excel(self.ticker_file_path+"\\NDQ "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
             
-            
             sp500_tickers = list(df_sp500['Symbol'])
             sp500_chg_tickers = list(df_sp500_chg['Added Ticker'])
             ndq_tickers = list(df_ndq['Ticker'] )
             
             sp500_tickers = [x for x in sp500_tickers if pd.isnull(x) == False]
-            #print('here2')
             sp500_chg_tickers = [x for x in sp500_chg_tickers if pd.isnull(x) == False]
             ndq_tickers = [x for x in ndq_tickers if pd.isnull(x) == False]
-
             
-            self.tickers = sorted(list(set(sp500_tickers+sp500_chg_tickers +ndq_tickers )))
+            all_tickers = list(set(sp500_tickers+sp500_chg_tickers +ndq_tickers ))
+            all_tickers = list(map(lambda x: str.replace(x, ".", "-"), all_tickers))
             
-            #print(self.tickers)
+            self.tickers = sorted(all_tickers)
         else:
             pass
         return
@@ -62,14 +61,22 @@ class YF_OHLC_Update():
         #update the ohlc files for tickers
         if (len(self.tickers) <=0):
             self.update_tickers()
-        
-        #print(self.tickers)
-        #print(len(self.tickers))
+
         for ticker in list(self.tickers):
-            df = data_utils.get_yf_daily_ohlcv(ticker)
-            if not df.empty:
-                df.to_csv(self.raw_data_path + "\\" + ticker + ".csv")
-            
+            output_file = self.raw_data_path + "\\" + ticker + ".csv"
+            if general_utils.check_file_exists(output_file):
+                df1 = pd.read_csv(output_file, header=0, index_col=0, parse_dates=[0], dtype ={'volume': np.int32})                
+                last_dt = df1.index[-1]
+                ndays_to_retrieve = (datetime.datetime.now() - last_dt).days + 10      
+                df = data_utils.get_yf_daily_ohlcv(ticker, str(ndays_to_retrieve)+"d")
+                if not df.empty:
+                    df = df.combine_first(df1)
+                    df.to_csv(output_file)
+            else:
+                df = data_utils.get_yf_daily_ohlcv(ticker )
+                if not df.empty:
+                    df.to_csv(output_file)
+                
         return
     
     def update_adjusted(self):

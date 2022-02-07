@@ -4,6 +4,8 @@
 #python3 -m pip instal pickle
 
 import pickle
+import os
+
 
 def save_file(path, object):
     try:
@@ -19,4 +21,14 @@ def load_file(path):
         return file
     except Exception as err:
         print("load error: ", err)
+        
+
+def check_file_exists(path):
+    try:
+        if os.path.isfile(path):
+            return True
+        else: 
+            return False
+    except Exception as err:
+        print("Checking error: ", err)
     
