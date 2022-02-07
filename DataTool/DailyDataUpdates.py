@@ -41,7 +41,7 @@ class YF_OHLC_Update():
         
         
         
-us_yf_update = YF_OHLC_Update("US Update", "US", "V:\\Daily\\USTickers", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+us_yf_update = YF_OHLC_Update("US Update", "US", "D:\\Daily\\USTickers", "D:\\Daily\\OHLC", "D:\\Daily\\Adjusted")
 
         
         
