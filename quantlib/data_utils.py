@@ -10,7 +10,7 @@ def get_sp500_instruments():
     soup = BeautifulSoup(res.content,'lxml')
     table = soup.find_all('table')[0] 
     df = pd.read_html(str(table))
-    return list(df[0]["Symbol"])
+    return df[0]
 
 
 def get_sp500_changes():
@@ -23,14 +23,21 @@ def get_sp500_changes():
     df.columns = new_columns
     return df
 
-#now let's get its ohlcv data.
-def get_sp500_df():
-    symbols = get_sp500_instruments() #lets just do it for 30 stocks
-    symbols = symbols[:30]
-    ohlcvs = {}
-    for symbol in symbols:
-        symbol_df = yf.Ticker(symbol).history(period="10y")
-        ohlcvs[symbol] = symbol_df[["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]].rename(
+def get_ndq_instruments():
+    res = requests.get("https://en.wikipedia.org/wiki/Nasdaq-100")
+    soup = BeautifulSoup(res.content,'lxml')
+    table = soup.find_all('table')[3] 
+    df = pd.read_html(str(table))
+    return df[0]
+
+    
+
+
+#a generic function for retrieving data from Yahoo Finance
+def get_yf_daily_ohlcv(symbol, period="max"):
+    symbol_df = yf.Ticker(symbol).history(period=period)
+    if not symbol_df.empty:
+        symbol_df[["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]].rename(
             columns={
                 "Open": "open",
                 "High": "high",
@@ -39,7 +46,30 @@ def get_sp500_df():
                 "Volume": "volume",
                 "Dividends": "dividends",
                 "Stock Splits": "stocksplits"}
-        )
+        , inplace=True)
+    
+    return symbol_df
+
+
+
+#now let's get its ohlcv data.
+def get_sp500_df():
+    symbols = get_sp500_instruments() #lets just do it for 30 stocks
+    symbols = symbols[:30]
+    ohlcvs = {}
+    for symbol in symbols:
+        # symbol_df = yf.Ticker(symbol).history(period="max")
+        # ohlcvs[symbol] = symbol_df[["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]].rename(
+        #     columns={
+        #         "Open": "open",
+        #         "High": "high",
+        #         "Low": "low",
+        #         "Close": "close",
+        #         "Volume": "volume",
+        #         "Dividends": "dividends",
+        #         "Stock Splits": "stocksplits"}
+        # )
+        ohlcvs[symbol] = get_yf_daily_ohlcv(symbol)
     #lets create a single dataframe with all the data inside
 
     df = pd.DataFrame(index=ohlcvs["AMZN"].index)
@@ -54,6 +84,10 @@ def get_sp500_df():
         df[columns] = inst_df
 
     return df, instruments
+
+
+
+    
 
 def extend_dataframe(traded, df, fx_codes):
     df.index = pd.Series(df.index).apply(lambda x: format_date(x))
