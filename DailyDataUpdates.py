@@ -53,7 +53,23 @@ class YF_OHLC_Update():
             
             self.tickers = sorted(all_tickers)
         else:
-            pass
+            if (self.market == "HK"):
+                hk_equities_datafile = self.ticker_file_path + "\\HKSecuritiesData.xlsx"
+                df = pd.read_excel(hk_equities_datafile, header=0, index_col=0,  engine="openpyxl")
+                hk_etf_datafile = self.ticker_file_path + "\\HKETFData.xlsx"
+                df1 = pd.read_excel(hk_etf_datafile, header=0, index_col=0,  engine="openpyxl")
+                
+                self.tickers = sorted(list(df.index)+list(df1.index))
+            else:
+                if (self.market == "CN"):
+                    sz_equities_datafile = self.ticker_file_path + "\\SZSecuritiesData.xlsx"
+                    df = pd.read_excel(sz_equities_datafile, header=0, index_col=0,  engine="openpyxl")
+                    sh_equities_datafile = self.ticker_file_path + "\\SHSecuritiesData.xlsx"
+                    df1 = pd.read_excel(sh_equities_datafile, header=0, index_col=0,  engine="openpyxl")
+                
+                self.tickers = sorted(list(df.index)+list(df1.index))
+                
+                
         return
     
         
@@ -65,7 +81,7 @@ class YF_OHLC_Update():
         for ticker in list(self.tickers):
             output_file = self.raw_data_path + "\\" + ticker + ".csv"
             if general_utils.check_file_exists(output_file):
-                df1 = pd.read_csv(output_file, header=0, index_col=0, parse_dates=[0], dtype ={'volume': np.int32})                
+                df1 = pd.read_csv(output_file, header=0, index_col=0, parse_dates=[0])                
                 last_dt = df1.index[-1]
                 ndays_to_retrieve = (datetime.datetime.now() - last_dt).days + 10      
                 df = data_utils.get_yf_daily_ohlcv(ticker, str(ndays_to_retrieve)+"d")
@@ -84,10 +100,15 @@ class YF_OHLC_Update():
         return
         
         
-        
-us_yf_update = YF_OHLC_Update("US Update", "US", "D:\\Daily\\USTickers", "D:\\Daily\\OHLC", "D:\\Daily\\Adjusted")
+
+hk_yf_update = YF_OHLC_Update("HK Update", "HK", "V:\\HKExFilings\\StockInfo", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+hk_yf_update.update_ohlc()
+
+us_yf_update = YF_OHLC_Update("US Update", "US", "V:\\Daily\\USTickers", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
 us_yf_update.update_ohlc()
 
-
-        
+cn_yf_update = YF_OHLC_Update("CN Update", "CN", "V:\\HKExFilings\\StockInfo", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+cn_yf_update.update_ohlc()
+    
+           
         

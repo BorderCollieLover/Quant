@@ -37,7 +37,7 @@ def get_ndq_instruments():
 def get_yf_daily_ohlcv(symbol, period="max"):
     symbol_df = yf.Ticker(symbol).history(period=period)
     if not symbol_df.empty:
-        symbol_df[["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]].rename(
+        symbol_df.rename(
             columns={
                 "Open": "open",
                 "High": "high",
@@ -47,7 +47,8 @@ def get_yf_daily_ohlcv(symbol, period="max"):
                 "Dividends": "dividends",
                 "Stock Splits": "stocksplits"}
         , inplace=True)
-    
+        symbol_df.fillna(method="ffill", inplace=True)
+        symbol_df.fillna(method="bfill", inplace=True)
     return symbol_df
 
 
