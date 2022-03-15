@@ -79,22 +79,29 @@ class YF_OHLC_Update():
             self.update_tickers()
 
         for ticker in list(self.tickers):
+            #print(ticker)
             output_file = self.raw_data_path + "\\" + ticker + ".csv"
             if general_utils.check_file_exists(output_file):
-                df1 = pd.read_csv(output_file, header=0, index_col=0, parse_dates=[0])                
-                last_dt = df1.index[-1]
-                ndays_to_retrieve = (datetime.datetime.now() - last_dt).days + 10      
-                df = data_utils.get_yf_daily_ohlcv(ticker, str(ndays_to_retrieve)+"d")
-                if not df.empty:
-                    #check if there are dividend/split events in retrieved data
-                    #yfinance returns dividend/split adjusted data by default 
-                    #hence in case of corp action, the entire history needs to be re-download
-                    corp_action = sum(df['dividends']) + sum(df['stocksplits'])
-                    if (corp_action >0):
-                        df = data_utils.get_yf_daily_ohlcv(ticker)
-                    else:
-                        df = df.combine_first(df1)
-                    df.to_csv(output_file)
+                try:
+                    df1 = pd.read_csv(output_file, header=0, index_col=0, parse_dates=[0])                
+                    last_dt = df1.index[-1]
+                    ndays_to_retrieve = (datetime.datetime.now() - last_dt).days + 10      
+                    df = data_utils.get_yf_daily_ohlcv(ticker, str(ndays_to_retrieve)+"d")
+                    if not df.empty:
+                        #check if there are dividend/split events in retrieved data
+                        #yfinance returns dividend/split adjusted data by default 
+                        #hence in case of corp action, the entire history needs to be re-download
+                        corp_action = sum(df['dividends']) + sum(df['stocksplits'])
+                        if (corp_action >0):
+                            df = data_utils.get_yf_daily_ohlcv(ticker)
+                        else:
+                            df = df.combine_first(df1)
+                        df.to_csv(output_file)
+                except Exception as e: 
+                    print(e)
+                    df = data_utils.get_yf_daily_ohlcv(ticker)
+                    if not df.empty:
+                        df.to_csv(output_file)
             else:
                 df = data_utils.get_yf_daily_ohlcv(ticker)
                 if not df.empty:
