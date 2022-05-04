@@ -67,7 +67,12 @@ class YF_OHLC_Update():
                     sh_equities_datafile = self.ticker_file_path + "\\SHSecuritiesData.xlsx"
                     df1 = pd.read_excel(sh_equities_datafile, header=0, index_col=0,  engine="openpyxl")
                 
-                self.tickers = sorted(list(df.index)+list(df1.index))
+                    self.tickers = sorted(list(df.index)+list(df1.index))
+                else:
+                    if (self.market =="Indices") : 
+                        index_file = self.ticker_file_path + "\\GlobalIndices.csv"
+                        df1 = pd.read_csv(index_file, header=None)
+                        self.tickers = sorted(list(df1[0]))
                 
                 
         return
@@ -124,6 +129,9 @@ us_yf_update.update_ohlc()
 
 cn_yf_update = YF_OHLC_Update("CN Update", "CN", "V:\\HKExFilings\\StockInfo", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
 cn_yf_update.update_ohlc()
+
+index_yf_update = YF_OHLC_Update("Index Update", "Indices", "V:\\Daily", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+index_yf_update.update_ohlc()
     
            
         
