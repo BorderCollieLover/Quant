@@ -36,9 +36,9 @@ class YF_OHLC_Update():
             df_sp500_chg = data_utils.get_sp500_changes()
             df_ndq = data_utils.get_ndq_instruments()
             
-            df_sp500.to_excel(self.ticker_file_path+"\\SP500 "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
-            df_sp500_chg.to_excel(self.ticker_file_path+"\\SP500 Change "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
-            df_ndq.to_excel(self.ticker_file_path+"\\NDQ "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
+            df_sp500.to_excel(self.ticker_file_path+"\\Archive\\SP500 "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
+            df_sp500_chg.to_excel(self.ticker_file_path+"\\Archive\\SP500 Change "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
+            df_ndq.to_excel(self.ticker_file_path+"\\Archive\\NDQ "+datetime.datetime.today().strftime("%Y%m%d")+".xlsx",engine="openpyxl", index=False)
             
             sp500_tickers = list(df_sp500['Symbol'])
             sp500_chg_tickers = list(df_sp500_chg['Added Ticker'])
@@ -49,9 +49,18 @@ class YF_OHLC_Update():
             ndq_tickers = [x for x in ndq_tickers if pd.isnull(x) == False]
             
             all_tickers = list(set(sp500_tickers+sp500_chg_tickers +ndq_tickers ))
-            all_tickers = list(map(lambda x: str.replace(x, ".", "-"), all_tickers))
+            all_tickers = sorted(list(map(lambda x: str.replace(x, ".", "-"), all_tickers)))
             
-            self.tickers = sorted(all_tickers)
+            us_ticker_file = self.ticker_file_path + "\\USTickers.csv"
+            us_ticker_archive = self.ticker_file_path + "\\Archive\\USTickers " + datetime.datetime.today().strftime("%Y%m%d")+".csv"
+            
+            with open(us_ticker_file, "w") as outfile:
+                outfile.write("\n".join(all_tickers))
+                
+            with open(us_ticker_archive, "w") as outfile:
+                outfile.write("\n".join(all_tickers))
+            
+            self.tickers = all_tickers
         else:
             if (self.market == "HK"):
                 hk_equities_datafile = self.ticker_file_path + "\\HKSecuritiesData.xlsx"
