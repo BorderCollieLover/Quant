@@ -33,33 +33,10 @@ class ResidualMomemtum():
     #use stock info data from YFinance, select tickers and beta columns 
     #keep only tickers with beta
     def update_tickers(self):
-        if (self.market =="US") : 
-            
-            data = pd.read_excel(USStockInfoDir+ "USTickers.csv", header=None)
-            ustickers = list(data[0])
-            
-            self.tickers = sorted(all_tickers)
-        else:
-            if (self.market == "HK"):
-                hk_equities_datafile = self.ticker_file_path + "\\HKSecuritiesData.xlsx"
-                df = pd.read_excel(hk_equities_datafile, header=0, index_col=0,  engine="openpyxl")
-                hk_etf_datafile = self.ticker_file_path + "\\HKETFData.xlsx"
-                df1 = pd.read_excel(hk_etf_datafile, header=0, index_col=0,  engine="openpyxl")
-                
-                self.tickers = sorted(list(df.index)+list(df1.index))
-            else:
-                if (self.market == "CN"):
-                    sz_equities_datafile = self.ticker_file_path + "\\SZSecuritiesData.xlsx"
-                    df = pd.read_excel(sz_equities_datafile, header=0, index_col=0,  engine="openpyxl")
-                    sh_equities_datafile = self.ticker_file_path + "\\SHSecuritiesData.xlsx"
-                    df1 = pd.read_excel(sh_equities_datafile, header=0, index_col=0,  engine="openpyxl")
-                
-                    self.tickers = sorted(list(df.index)+list(df1.index))
-                else:
-                    if (self.market =="Indices") : 
-                        index_file = self.ticker_file_path + "\\GlobalIndices.csv"
-                        df1 = pd.read_csv(index_file, header=None)
-                        self.tickers = sorted(list(df1[0]))
+        data = pd.read_csv(self.stockdata_file, index_col=0)
+        data = data[['marketCap', 'averageVolume', 'fiftyDayAverage', 'beta']]
+        
+        
                 
                 
         return
