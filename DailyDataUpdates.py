@@ -19,12 +19,16 @@ class YF_OHLC_Update():
     
     tickers = []
     
-    def __init__(self, update_name, market, ticker_file_path, raw_data_path, adjusted_data_path):
+    def __init__(self, update_name, market, ticker_file_path, raw_data_path, adjusted_data_path, return_path):
         self.update_name = update_name
         self.market = market
         self.ticker_file_path = ticker_file_path
         self.raw_data_path = raw_data_path
         self.adjusted_data_path = adjusted_data_path
+        self.return_path = return_path
+        #self.simple_return_path = simple_return_path
+        #self.log_return_path = log_return_path
+        #self.daily_var_path = daily_var_path
         self.tickers =[]
 
     def update_tickers(self):
@@ -123,6 +127,26 @@ class YF_OHLC_Update():
                 
         return
     
+    #Calculate simple return, log return, 1-period variance for given OHLC
+    def update_return(self):
+        if (len(self.tickers) <=0):
+            self.update_tickers()
+
+        for ticker in list(self.tickers):
+            #print(ticker)
+            try:
+                ohlc_file = self.raw_data_path + "\\" + ticker + ".csv"
+                output_file = self.return_path+ "\\" + ticker + ".csv"
+                ohlc_data = pd.read_csv(ohlc_file, header=0, index_col=0, parse_dates=[0])
+                ohlc_data['SimpleRet'] = ohlc_data['close'].pct_change()
+                ohlc_data['LogRet'] = np.log(ohlc_data.close) - np.log(ohlc_data.close.shift(1))
+                ohlc_data['Var1'] = np.square(ohlc_data.LogRet)
+                ohlc_data[['SimpleRet', 'LogRet', 'Var1']].to_csv(output_file)
+            except Exception as e: 
+                print(e)
+        return
+        
+    
     def update_adjusted(self):
         #update adjusted ohlc files, adjusting for dividend and splits
         #pass for now -- yfinance downloads dividend/split adjusted OHLCV by default 
@@ -130,17 +154,22 @@ class YF_OHLC_Update():
         
         
 
-hk_yf_update = YF_OHLC_Update("HK Update", "HK", "V:\\HKExFilings\\StockInfo", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+hk_yf_update = YF_OHLC_Update("HK Update", "HK", "V:\\HKExFilings\\StockInfo", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted", "V:\\Daily\\Return")
 hk_yf_update.update_ohlc()
+hk_yf_update.update_return()
 
-us_yf_update = YF_OHLC_Update("US Update", "US", "V:\\Daily\\USTickers", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+
+us_yf_update = YF_OHLC_Update("US Update", "US", "V:\\Daily\\USTickers", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted","V:\\Daily\\Return")
 us_yf_update.update_ohlc()
+us_yf_update.update_return()
 
-cn_yf_update = YF_OHLC_Update("CN Update", "CN", "V:\\HKExFilings\\StockInfo", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+cn_yf_update = YF_OHLC_Update("CN Update", "CN", "V:\\HKExFilings\\StockInfo", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted", "V:\\Daily\\Return")
 cn_yf_update.update_ohlc()
+cn_yf_update.update_return()
 
-index_yf_update = YF_OHLC_Update("Index Update", "Indices", "V:\\Daily", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted")
+
+index_yf_update = YF_OHLC_Update("Index Update", "Indices", "V:\\Daily", "V:\\Daily\\OHLC", "V:\\Daily\\Adjusted","V:\\Daily\\Return")
 index_yf_update.update_ohlc()
-    
+index_yf_update.update_return()    
            
         
