@@ -22,45 +22,26 @@ import quantlib.data_utils as data_utils
 import quantlib.general_utils as general_utils
 
 
-class PCY_Update():
+class PCY():
     
-    tickers = []
-    
-    def __init__(self, alpha, ohlc_file_path, output_file_path):
+    def __init__(self, ticker, alpha, ma_short, ma_long, ohlc_file_path, output_file_path):
         self.ohlc_file_path = ohlc_file_path
         self.output_file_path = output_file_path
-        self.tickers =[]
+        self.ticker = ticker
         self.alpha = alpha
-
-    
-    def pcy
-    def update(self):
-        #update the ohlc files for tickers
-        if (len(self.tickers) <=0):
-            self.update_tickers()
-            
+        self.data = pd.DataFrame()
+        self.ma_short = ma_short # small moving average 
+        self.ma_long = ma_long # large moving average
+        
         
 
-        for ticker in list(self.tickers):
-            #1. check if OHLC file exists, if not skip -- need OHLC
-            #2. check if PCF file exists, if not -- calculate from beginning 
-            #3. if both file exists, check if the PCF file is older, if yes, skip 
-            #4. if no, calculate the updated part of PCF
-            #print(ticker)
-            output_file = self.output_file_path + "\\" + ticker + ".csv"
-            ohlc_file = self.ohlc_file_path + "\\" + ticker + ".csv"
-            if general_utils.check_file_exists(ohlc_file):
-                if general_utils.check_file_exists(output_file):
-                    try:
-                        ohlc_df = pd.read_csv(ohlc_file, header=0, index_col=0, parse_dates=[0])                
-                        last_dt = ohlc_df.index[-1]
-                    except Exception as e: 
-                        print (e)
-                else:
-                    #caclulate 
-                    
-                    # find the last date of the PCF 
-                    #
-                
+    
+    def pcy(self):
+        #1. read the ohlc data
+        self.ohlc = pd.read_csv(self.ohlc_file_path +"\\"+ self.ticker + ".csv", index_col=0, header=0,parse_dates=[0])
+        
+        self.ohlc['MAK'] 
         return
+    
+
     
